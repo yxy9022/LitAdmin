@@ -3,7 +3,7 @@
     <!--头部-->
     <el-col :span="24" class="topbar-wrap">
       <div class="topbar-logo topbar-btn">
-        <a href="/"><img src="../assets/logo.png" style="width:42px;"></a>
+        <a href="/"><img src="../assets/logo.png" style="width:42px;margin-top: 5px;"></a>
       </div>
       <div class="topbar-title topbar-btn">
         <span>风车车的枫叶</span>
@@ -17,51 +17,45 @@
     <el-col :span="24" class="main">
       <!--左侧导航-->
       <aside :class="collapsed?'menu-collapsed':'menu-expanded'">
-        <div style="background:#4A5064;text-align:center;color:white;
-        height: 30px;line-height:30px;" @click.prevent="collapse">
+
+        <!--展开折叠开关-->
+        <div class="menu-toggle" @click.prevent="collapse">
           <i class="iconfont icon-menufold" v-show="!collapsed"></i>
           <i class="iconfont icon-menuunfold" v-show="collapsed"></i>
         </div>
 
-        <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
-                 unique-opened router v-show="!collapsed" style="border-radius:0px;">
+        <!--菜单展开时的显示情况-->
+        <el-menu v-show="!collapsed" default-active="0" @open="handleOpen" @close="handleClose" router>
           <template v-for="(item,index) in $router.options.routes" v-if="item.menuShow">
-            <el-submenu :index="index+''" v-if="!item.leaf">
+            <el-submenu v-if="!item.leaf" :index="index+''">
               <template slot="title"><i :class="item.iconCls"></i>{{item.name}}</template>
               <el-menu-item v-for="(child,key) in item.children" :index="child.path" v-if="child.menuShow">
                 {{child.name}}
               </el-menu-item>
             </el-submenu>
-            <el-menu-item v-if="item.leaf&&item.children.length>0" :index="item.children[0].path">
+            <el-menu-item  v-else-if="item.leaf&&item.children&&item.children.length" :index="item.children[0].path" class="el-submenu__title">
               <i :class="item.iconCls"></i>{{item.children[0].name}}
             </el-menu-item>
           </template>
         </el-menu>
 
-        <!--导航菜单-折叠后-->
-        <ul class="el-menu el-menu-vertical-demo collapsed" v-show="collapsed" ref="menuCollapsed" style="border-radius:0px;">
-          <li v-for="(item,index) in $router.options.routes" v-if="item.menuShow" class="el-submenu item">
-            <template v-if="!item.leaf">
-              <div class="el-submenu__title" style="padding-left: 20px;" @mouseover="showMenu(index,true)"
-                   @mouseout="showMenu(index,false)"><i :class="item.iconCls"></i></div>
-              <ul class="el-menu submenu" :class="'submenu-hook-'+index" @mouseover="showMenu(index,true)"
-                  @mouseout="showMenu(index,false)">
-                <li v-for="(child,keys) in item.children" v-if="child.menuShow" class="el-menu-item"
-                    style="padding-left: 40px;" :class="$route.path==child.path?'is-active':''"
-                    @click="$router.push(child.path)">{{child.name}}
-                </li>
+        <!--菜单折叠后的显示情况-->
+        <ul v-show="collapsed" class="el-menu collapsed" ref="menuCollapsed">
+          <template v-for="(item,index) in $router.options.routes" v-if="item.menuShow">
+            <li v-if="!item.leaf" :index="index+''" style="position: relative;">
+              <div class="el-submenu__title" style="padding-left: 20px;" @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)"><i :class="item.iconCls"></i></div>
+              <ul class="el-menu submenu" :class="'submenu-hook-'+index" @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)">
+                <li v-for="(child,keys) in item.children" v-if="child.menuShow" class="el-menu-item" style="padding-left: 40px;" :class="$route.path==child.path?'is-active':''"
+                    @click="$router.push(child.path)">{{child.name}}</li>
               </ul>
-            </template>
-            <template v-else>
-              <div class="el-submenu__title el-menu-item"
-                   :class="$route.path==item.children[0].path?'is-active':''"
-                   style="padding-left: 20px;height: 56px;line-height: 56px;padding: 0 20px;"
-                   @click="$router.push(item.children[0].path)">
-                <i :class="item.iconCls"></i>
-              </div>
-            </template>
-          </li>
+            </li>
+            <li v-else-if="item.leaf&&item.children&&item.children.length" class="el-menu-item el-submenu__title" :class="$route.path==item.children[0].path?'is-active':''" @click="$router.push(item.children[0].path)"
+                 style="padding-left: 20px;height: 56px;line-height: 56px;padding: 0 20px;">
+              <i :class="item.iconCls"></i>
+            </li>
+          </template>
         </ul>
+
       </aside>
 
       <!--右侧内容区-->
@@ -80,54 +74,50 @@
 </template>
 
 <script>
-export default {
-  name: 'home',
-  data () {
-    return {
-      collapsed:false,
+  export default {
+    name: 'home',
+    data () {
+      return {
+        collapsed: false,
+      }
+    },
+    methods: {
+      handleOpen() {
+        //console.log('handleopen');
+      },
+      handleClose() {
+        //console.log('handleclose');
+      },
+      //折叠导航栏
+      collapse: function () {
+        this.collapsed = !this.collapsed;
+      },
+      showMenu(i, status){
+        this.$refs.menuCollapsed.getElementsByClassName('submenu-hook-' + i)[0].style.display = status ? 'block' : 'none';
+      }
     }
-  },
-  methods: {
-			handleOpen() {
-				//console.log('handleopen');
-			},
-			handleClose() {
-				//console.log('handleclose');
-			},
-			//折叠导航栏
-			collapse:function(){
-				this.collapsed=!this.collapsed;
-			},
-			showMenu(i,status){
-				this.$refs.menuCollapsed.getElementsByClassName('submenu-hook-'+i)[0].style.display=status?'block':'none';
-			}
-		}
-}
+  }
 
 
 </script>
 <style>
-  .el-menu-item, .el-submenu__title{
-    color:#fff;
-  }
-  .el-submenu .el-menu{
-    background-color: #42485B;
-  }
-  .el-submenu .el-menu-item:hover{
-    background-color: #4A5064
-  }
-  .el-submenu .el-menu-item.is-active:hover, .el-menu-item.is-active:hover {
-      background-color: #00C1DE;
-      color:#fff;
+  .el-menu-item, .el-submenu__title {
+    color: #fff;
   }
   .el-submenu__title:hover {
     background-color: #00C1DE;
   }
-  .el-submenu .el-menu-item.is-active, .el-menu-item.is-active {
-      background-color: #00C1DE;
-      color:#fff;
+  .el-submenu .el-menu-item {
+    background-color: #333744
   }
-
+  .el-submenu .el-menu-item:hover {
+    background-color: #4A5064
+  }
+  .el-submenu .el-menu-item.is-active, .el-menu-item.is-active,
+  .el-submenu .el-menu-item.is-active:hover, .el-menu-item.is-active:hover {
+    background-color: #00C1DE;
+    color: #fff;
+  }
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
@@ -143,10 +133,10 @@ export default {
       background: #373d41;
       padding: 0px;
 
-      .topbar-btn{
-        color:#fff;
+      .topbar-btn {
+        color: #fff;
       }
-      .topbar-btn:hover{
+      .topbar-btn:hover {
         background-color: #4A5064;
       }
       .topbar-logo {
@@ -179,23 +169,19 @@ export default {
       width: 180px;
       .el-menu {
         height: 100%;
+        border-radius: 0px;
+        background-color: #333744;
       }
       .collapsed {
         width: 50px;
-        .item {
-          position: relative;
-        }
         .submenu {
           position: absolute;
           top: 0px;
           left: 50px;
-          z-index: 99999;
+          z-index: 9999;
           height: auto;
           display: none;
         }
-      }
-      .el-menu {
-        background-color: #333744; /*42485B*/
       }
     }
     .menu-collapsed {
@@ -207,6 +193,13 @@ export default {
       width: 180px;
     }
 
+    .menu-toggle {
+      background: #4A5064;
+      text-align: center;
+      color: white;
+      height: 30px;
+      line-height: 30px;
+    }
     .content-container {
       background: #fff;
       flex: 1;

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
+import Dashboard from '@/components/Dashboard'
 import M1 from '@/components/menus/m1'
 import M2 from '@/components/menus/m2'
 import M3 from '@/components/menus/m3'
@@ -14,8 +15,15 @@ let router = new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: Home
+      name: '首页',
+      component: Home,
+      redirect: '/dashboard',
+      leaf: true,//只有一个节点
+      menuShow: true,
+      iconCls: 'el-icon-menu',//图标样式class
+      children: [
+        {path: '/dashboard', component: Dashboard, name: '首页', menuShow: true}
+      ]
     },
     {
       path: '/',
@@ -53,7 +61,7 @@ let router = new Router({
   ]
 })
 
-router.beforeEach((to, from, next)=> {
+router.beforeEach((to, from, next) => {
   //console.log('to:' + to.path)
   next()
 })
