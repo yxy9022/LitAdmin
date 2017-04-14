@@ -9,14 +9,14 @@
     </el-col>
 
     <el-col :span="24" class="warp-main">
-      <el-form ref="form" :model="form" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="账号">
           <el-input v-model="form.useranme" disabled></el-input>
         </el-form-item>
-        <el-form-item label="昵称">
+        <el-form-item prop="name" label="昵称">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <el-form-item label="邮箱">
+        <el-form-item prop="email" label="邮箱">
           <el-input v-model="form.email"></el-input>
         </el-form-item>
         <el-form-item>
@@ -29,7 +29,7 @@
 
 <script>
   import {reqSaveUserProfile} from '../../api/api';
-  import { bus } from '../../bus.js'
+  import {bus} from '../../bus.js'
 
   export default {
     data() {
@@ -38,30 +38,46 @@
           useranme: '',
           name: '',
           email: ''
-        }
+        },
+        rules: {
+          name: [
+            {required: true, message: '请输入昵称', trigger: 'blur'}
+          ],
+          email: [
+            {required: true, message: '请输入邮箱', trigger: 'blur'},
+            { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur,change' }
+          ]
+        },
       }
     },
     methods: {
       onSubmit() {
         var that = this;
-        var args = {name: this.form.name, email: this.form.email};
-        reqSaveUserProfile(args).then(function (data) {
-          let { msg, code, user } = data;
-          if (code !== 200) {
-            that.$message({
-              message: msg,
-              type: 'error'
-            });
+        this.$refs.form.validate((valid) => {
+          if (valid) {
+            var args = {name: this.form.name, email: this.form.email};
+            reqSaveUserProfile(args).then(function (data) {
+              let {msg, code, user} = data;
+              if (code !== 200) {
+                that.$message({
+                  message: msg,
+                  type: 'error'
+                });
+              } else {
+                sessionStorage.setItem('access-user', JSON.stringify(user));
+                bus.$emit('setUserName', user.name);
+                that.$message({
+                  message: "修改成功！",
+                  type: 'success',
+                  duration: 2000 //默认3s太长
+                });
+              }
+            })
           } else {
-            sessionStorage.setItem('access-user', JSON.stringify(user));
-            bus.$emit('setUserName', user.name);
-            that.$message({
-              message: "修改成功！",
-              type: 'success',
-              duration:2000 //默认3s太长
-            });
+            console.log('error submit!!');
+            return false;
           }
-        })
+        });
       }
     },
     mounted() {
