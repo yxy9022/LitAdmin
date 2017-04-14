@@ -9,7 +9,7 @@
     </el-col>
 
     <el-col :span="24" class="warp-main">
-      <div>this is template book category list</div>
+      <h2>神马也没有！</h2>
     </el-col>
   </el-row>
 </template>
