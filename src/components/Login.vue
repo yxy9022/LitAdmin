@@ -72,7 +72,11 @@
   }
 
 </script>
-
+<style>
+  body{
+    background: #DFE9FB;
+  }
+</style>
 <style lang="scss" scoped>
   .login-container {
     /*box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.06), 0 1px 0px 0 rgba(0, 0, 0, 0.02);*/
@@ -80,12 +84,20 @@
     border-radius: 5px;
     -moz-border-radius: 5px;
     background-clip: padding-box;
-    margin: 180px auto;
+    margin: 160px auto;
     width: 350px;
     padding: 35px 35px 15px 35px;
     background: #fff;
     border: 1px solid #eaeaea;
     box-shadow: 0 0 25px #cac6c6;
+
+    background: -ms-linear-gradient(top, #fff, #6495ed);        /* IE 10 */
+    background:-moz-linear-gradient(top,#b8c4cb,#f6f6f8);/*火狐*/
+    background:-webkit-gradient(linear, 0% 0%, 0% 100%,from(#b8c4cb), to(#f6f6f8));/*谷歌*/
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff), to(#6495ed));      /* Safari 4-5, Chrome 1-9*/
+    background: -webkit-linear-gradient(top, #fff, #6495ed,#fff);   /*Safari5.1 Chrome 10+*/
+    background: -o-linear-gradient(top, #fff, #6495ed);  /*Opera 11.10+*/
+
     .title {
       margin: 0px auto 40px auto;
       text-align: center;
