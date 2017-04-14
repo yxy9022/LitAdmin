@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>this is template dashboard</div>
+    <div>this is template book category list</div>
   </div>
 </template>
 <script>

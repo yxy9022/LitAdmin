@@ -9,7 +9,14 @@
         <span>风车车的枫叶</span>
       </div>
       <div class="topbar-account topbar-btn">
-        <span>jerry9022@qq.com</span>
+        <el-dropdown trigger="click">
+          <span class="el-dropdown-link userinfo-inner"><i class="iconfont icon-user"></i> {{sysUserName}}  <i class="iconfont icon-down"></i></span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item><router-link to="/user/profile">个人信息</router-link></el-dropdown-item>
+            <el-dropdown-item><router-link :to="'/user/changepwd'">修改密码</router-link></el-dropdown-item>
+            <el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </div>
     </el-col>
 
@@ -29,11 +36,11 @@
           <template v-for="(item,index) in $router.options.routes" v-if="item.menuShow">
             <el-submenu v-if="!item.leaf" :index="index+''">
               <template slot="title"><i :class="item.iconCls"></i>{{item.name}}</template>
-              <el-menu-item v-for="(child,key) in item.children" :index="child.path" v-if="child.menuShow">
-                {{child.name}}
+              <el-menu-item v-for="term in item.children" :key="term.path" :index="term.path" v-if="term.menuShow">
+                {{term.name}}
               </el-menu-item>
             </el-submenu>
-            <el-menu-item  v-else-if="item.leaf&&item.children&&item.children.length" :index="item.children[0].path" class="el-submenu__title">
+            <el-menu-item v-else-if="item.leaf&&item.children&&item.children.length" :index="item.children[0].path" class="el-submenu__title">
               <i :class="item.iconCls"></i>{{item.children[0].name}}
             </el-menu-item>
           </template>
@@ -45,12 +52,11 @@
             <li v-if="!item.leaf" :index="index+''" style="position: relative;">
               <div class="el-submenu__title" style="padding-left: 20px;" @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)"><i :class="item.iconCls"></i></div>
               <ul class="el-menu submenu" :class="'submenu-hook-'+index" @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)">
-                <li v-for="(child,keys) in item.children" v-if="child.menuShow" class="el-menu-item" style="padding-left: 40px;" :class="$route.path==child.path?'is-active':''"
-                    @click="$router.push(child.path)">{{child.name}}</li>
+                <li v-for="term in item.children" :key="term.path" v-if="term.menuShow" class="el-menu-item" style="padding-left: 40px;" :class="$route.path==term.path?'is-active':''"
+                    @click="$router.push(term.path)">{{term.name}}</li>
               </ul>
             </li>
-            <li v-else-if="item.leaf&&item.children&&item.children.length" class="el-menu-item el-submenu__title" :class="$route.path==item.children[0].path?'is-active':''" @click="$router.push(item.children[0].path)"
-                 style="padding-left: 20px;height: 56px;line-height: 56px;padding: 0 20px;">
+            <li v-else-if="item.leaf&&item.children&&item.children.length" class="el-menu-item el-submenu__title" :class="$route.path==item.children[0].path?'is-active':''" @click="$router.push(item.children[0].path)">
               <i :class="item.iconCls"></i>
             </li>
           </template>
@@ -78,6 +84,8 @@
     name: 'home',
     data () {
       return {
+        sysUserName: '',
+        sysUserAvatar: '',
         collapsed: false,
       }
     },
@@ -94,6 +102,24 @@
       },
       showMenu(i, status){
         this.$refs.menuCollapsed.getElementsByClassName('submenu-hook-' + i)[0].style.display = status ? 'block' : 'none';
+      },
+      logout(){
+        var _this = this;
+        this.$confirm('确认退出吗?', '提示', {
+          //type: 'warning'
+        }).then(() => {
+          sessionStorage.removeItem('access-user');
+          _this.$router.push('/login');
+        }).catch(() => {
+
+        });
+      }
+    },
+    mounted() {
+      var user = sessionStorage.getItem('access-user');
+      if (user) {
+        user = JSON.parse(user);
+        this.sysUserName = user.name || '';
       }
     }
   }
@@ -117,6 +143,10 @@
   .el-submenu .el-menu-item.is-active:hover, .el-menu-item.is-active:hover {
     background-color: #00C1DE;
     color: #fff;
+  }
+  .el-menu .iconfont{
+    vertical-align: baseline;
+    margin-right: 6px;
   }
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -156,6 +186,11 @@
         float: right;
         padding-right: 12px;
       }
+      .userinfo-inner{
+        cursor: pointer;
+        color: #fff;
+        padding-left: 10px;
+      }
     }
     .main {
       display: flex;
@@ -192,12 +227,11 @@
       flex: 0 0 180px;
       width: 180px;
     }
-
     .menu-toggle {
       background: #4A5064;
       text-align: center;
       color: white;
-      height: 30px;
+      height: 26px;
       line-height: 30px;
     }
     .content-container {

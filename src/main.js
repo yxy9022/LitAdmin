@@ -6,6 +6,9 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 import '@/assets/iconfont.css'
 
+import Mock from './mock'
+Mock.init();
+
 import router from './router'
 
 Vue.config.productionTip = false
