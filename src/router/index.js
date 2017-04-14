@@ -25,7 +25,7 @@ let router = new Router({
     },
     {
       path: '/',
-      name: '首页',
+      name: 'home',
       component: Home,
       redirect: '/dashboard',
       leaf: true,//只有一个节点
@@ -38,7 +38,7 @@ let router = new Router({
     {
       path: '/',
       component: Home,
-      name: '用户列表',
+      name: '用户管理',
       menuShow: true,
       leaf: true,//只有一个节点
       iconCls: 'iconfont icon-users', //图标样式class

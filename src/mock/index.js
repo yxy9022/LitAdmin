@@ -3,7 +3,7 @@
  */
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import { LoginUsers, Users } from './data/user';
+import {LoginUsers, Users} from './data/user';
 let _Users = Users;
 
 export default {
@@ -36,13 +36,23 @@ export default {
           });
 
           if (hasUser) {
-            resolve([200, { code: 200, msg: '请求成功', user }]);
+            resolve([200, {code: 200, msg: '请求成功', user}]);
           } else {
-            resolve([200, { code: 500, msg: '账号或密码错误' }]);
+            resolve([200, {code: 500, msg: '账号或密码错误'}]);
           }
         }, 1000);
       });
     });
+
+    mock.onPost('/user/profile').reply(function (arg) {
+      let {name, email} = JSON.parse(arg.data);
+      return new Promise((resolve, reject) => {
+        let user = LoginUsers[0];
+        user.name = name;
+        user.email = email;
+        resolve([200, {code: 200, msg: '请求成功', user}]);
+      });
+    })
 
   }
 

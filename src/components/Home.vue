@@ -80,8 +80,14 @@
 </template>
 
 <script>
+  import { bus } from '../bus.js'
   export default {
     name: 'home',
+    created(){
+      bus.$on('setUserName', (text) => {
+        this.sysUserName = text;
+      })
+    },
     data () {
       return {
         sysUserName: '',
@@ -147,6 +153,14 @@
   .el-menu .iconfont{
     vertical-align: baseline;
     margin-right: 6px;
+  }
+
+  .warp-breadcrum{
+    padding: 10px 0px;
+    border-bottom: 1px solid #efefef;
+  }
+  .warp-main{
+    padding-top: 20px;
   }
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -238,7 +252,7 @@
       background: #fff;
       flex: 1;
       overflow-y: auto;
-      padding: 20px;
+      padding: 10px;
 
       .content-wrapper {
         background-color: #fff;
