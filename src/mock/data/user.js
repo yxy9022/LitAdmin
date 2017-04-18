@@ -1,7 +1,7 @@
 /**
  * Created by jerry on 2017/4/13.
  */
-import Mock from 'mockjs';
+import Mock from 'mockjs'
 const LoginUsers = [
   {
     id: 1,
@@ -10,9 +10,9 @@ const LoginUsers = [
     email: 'jerry9022@qq.com',
     name: '风车车'
   }
-];
+]
 
-const Users = [];
+const Users = []
 for (let i = 0; i < 100; i++) {
   Users.push(Mock.mock({
     id: Mock.Random.guid(),
@@ -21,7 +21,7 @@ for (let i = 0; i < 100; i++) {
     'age|18-60': 1,
     birth: Mock.Random.date(),
     sex: Mock.Random.integer(0, 1)
-  }));
+  }))
 }
 
-export {LoginUsers, Users};
+export {LoginUsers, Users}

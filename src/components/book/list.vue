@@ -40,7 +40,7 @@
         </el-table-column>
         <el-table-column prop="name" label="书名" sortable></el-table-column>
         <el-table-column prop="author" label="作者" width="100" sortable></el-table-column>
-        <el-table-column prop="publish_at" label="出版日期" width="150" sortable></el-table-column>
+        <el-table-column prop="publishAt" label="出版日期" width="150" sortable></el-table-column>
         <el-table-column label="操作" width="150">
           <template scope="scope">
             <el-button size="small" @click="showEditDialog(scope.$index,scope.row)">编辑</el-button>
@@ -66,7 +66,7 @@
             <el-input v-model="editForm.author" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="出版日期">
-            <el-date-picker type="date" placeholder="选择日期" v-model="editForm.publish_at"></el-date-picker>
+            <el-date-picker type="date" placeholder="选择日期" v-model="editForm.publishAt"></el-date-picker>
           </el-form-item>
           <el-form-item label="简介" prop="description">
             <el-input type="textarea" v-model="editForm.description" :rows="8"></el-input>
@@ -88,7 +88,7 @@
             <el-input v-model="addForm.author" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="出版日期">
-            <el-date-picker type="date" placeholder="选择日期" v-model="addForm.publish_at"></el-date-picker>
+            <el-date-picker type="date" placeholder="选择日期" v-model="addForm.publishAt"></el-date-picker>
           </el-form-item>
           <el-form-item label="简介" prop="description">
             <el-input type="textarea" v-model="addForm.description" :rows="8"></el-input>
@@ -137,7 +137,7 @@
           id: 0,
           name: '',
           author: '',
-          publish_at: '',
+          publishAt: '',
           description: ''
         },
 
@@ -158,7 +158,7 @@
         addForm: {
           name: '',
           author: '',
-          publish_at: '',
+          publishAt: '',
           description: ''
         }
       }
@@ -217,7 +217,7 @@
               this.editLoading = true;
               //NProgress.start();
               let para = Object.assign({}, this.editForm);
-              para.publish_at = (!para.publish_at || para.publish_at == '') ? '' : util.formatDate.format(new Date(para.publish_at), 'yyyy-MM-dd');
+              para.publishAt = (!para.publishAt || para.publishAt == '') ? '' : util.formatDate.format(new Date(para.publishAt), 'yyyy-MM-dd');
               reqEditBook(para).then((res) => {
                 this.editLoading = false;
                 //NProgress.done();
@@ -238,7 +238,7 @@
         this.addForm = {
           name: '',
           author: '',
-          publish_at: '',
+          publishAt: '',
           description: ''
         };
       },
@@ -249,7 +249,7 @@
             this.addLoading = true;
             //NProgress.start();
             let para = Object.assign({}, this.addForm);
-            para.publish_at = (!para.publish_at || para.publish_at == '') ? '' : util.formatDate.format(new Date(para.publish_at), 'yyyy-MM-dd');
+            para.publishAt = (!para.publishAt || para.publishAt == '') ? '' : util.formatDate.format(new Date(para.publishAt), 'yyyy-MM-dd');
             reqAddBook(para).then((res) => {
               this.addLoading = false;
               //NProgress.done();
