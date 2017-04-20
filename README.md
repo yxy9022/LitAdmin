@@ -1,5 +1,5 @@
 # litadmin
-> A Vue.js project
+> A Vue.js project for backend
 
 ## 介绍
 
@@ -9,11 +9,11 @@
 
 ### 相关技术：
 
-* vuejs2.0：渐进式JavaScript框架，易用、灵活、高效，似乎任何规模的应用都适用。
+* vuejs2.0：一套构建用户界面的渐进式框架，易用、灵活、高效。
 
-* element-ui：基于vuejs2.0的ui组件库。
+* element-ui：一套为开发者、设计师和产品经理准备的基于 Vue 2.0 的组件库。
 
-* vue-router：一般单页面应用spa都要用到的前端路由。
+* vue-router：官方的路由组件，配合vue.js创建单页应用（SPA）非常简单。
 
 * axios: 基于 Promise 的 HTTP 请求客户端，可同时在浏览器和 node.js 中使用。
 
@@ -32,5 +32,3 @@ npm run dev
 # build for production with minification
 npm run build
 ```
-
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
