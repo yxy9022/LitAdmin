@@ -8,7 +8,7 @@ const LoginUsers = [
     username: 'admin',
     password: '123456',
     email: 'jerry9022@qq.com',
-    name: '风车车'
+    name: '超级管理员'
   }
 ]
 

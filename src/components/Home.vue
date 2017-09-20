@@ -3,17 +3,25 @@
     <!--头部-->
     <el-col :span="24" class="topbar-wrap">
       <div class="topbar-logo topbar-btn">
-        <a href="/"><img src="../assets/logo.png" style="width:42px;margin-top: 5px;"></a>
+        <a href="/"><img src="../assets/logo.png" style="padding-left:8px;"></a>
       </div>
-      <div class="topbar-title topbar-btn">
-        <span>风车车的枫叶</span>
+      <div class="topbar-logos" v-show="!collapsed">
+        <a href="/"><img src="../assets/logotxt.png"></a>
+      </div>
+      <div class="topbar-title">
+        <span style="font-size: 18px;color: #fff;">后台管理系统</span>
       </div>
       <div class="topbar-account topbar-btn">
         <el-dropdown trigger="click">
-          <span class="el-dropdown-link userinfo-inner"><i class="iconfont icon-user"></i> {{sysUserName}}  <i class="iconfont icon-down"></i></span>
+          <span class="el-dropdown-link userinfo-inner"><i class="iconfont icon-user"></i> {{sysUserName}}  <i
+            class="iconfont icon-down"></i></span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item><router-link to="/user/profile">个人信息</router-link></el-dropdown-item>
-            <el-dropdown-item><router-link :to="'/user/changepwd'">修改密码</router-link></el-dropdown-item>
+            <el-dropdown-item>
+              <router-link to="/user/profile"><span style="color: #555;font-size: 14px;">个人信息</span></router-link>
+            </el-dropdown-item>
+            <el-dropdown-item>
+              <router-link :to="'/user/changepwd'"><span style="color: #555;font-size: 14px;">修改密码</span></router-link>
+            </el-dropdown-item>
             <el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -23,45 +31,28 @@
     <!--中间-->
     <el-col :span="24" class="main">
       <!--左侧导航-->
-      <aside :class="collapsed?'menu-collapsed':'menu-expanded'">
-
+      <aside :class="{showSidebar:!collapsed}">
         <!--展开折叠开关-->
         <div class="menu-toggle" @click.prevent="collapse">
           <i class="iconfont icon-menufold" v-show="!collapsed"></i>
           <i class="iconfont icon-menuunfold" v-show="collapsed"></i>
         </div>
-
-        <!--菜单展开时的显示情况-->
-        <el-menu v-show="!collapsed" default-active="0" @open="handleOpen" @close="handleClose" router>
+        <!--导航菜单-->
+        <el-menu default-active="0" router :collapse="collapsed">
           <template v-for="(item,index) in $router.options.routes" v-if="item.menuShow">
             <el-submenu v-if="!item.leaf" :index="index+''">
-              <template slot="title"><i :class="item.iconCls"></i>{{item.name}}</template>
-              <el-menu-item v-for="term in item.children" :key="term.path" :index="term.path" v-if="term.menuShow">
-                {{term.name}}
+              <template slot="title"><i :class="item.iconCls"></i><span slot="title">{{item.name}}</span></template>
+              <el-menu-item v-for="term in item.children" :key="term.path" :index="term.path" v-if="term.menuShow"
+                            :class="$route.path==term.path?'is-active':''">
+                <i :class="term.iconCls"></i><span slot="title">{{term.name}}</span>
               </el-menu-item>
             </el-submenu>
-            <el-menu-item v-else-if="item.leaf&&item.children&&item.children.length" :index="item.children[0].path" class="el-submenu__title">
-              <i :class="item.iconCls"></i>{{item.children[0].name}}
+            <el-menu-item v-else-if="item.leaf&&item.children&&item.children.length" :index="item.children[0].path"
+                          :class="$route.path==item.children[0].path?'is-active':''">
+              <i :class="item.iconCls"></i><span slot="title">{{item.children[0].name}}</span>
             </el-menu-item>
           </template>
         </el-menu>
-
-        <!--菜单折叠后的显示情况-->
-        <ul v-show="collapsed" class="el-menu collapsed" ref="menuCollapsed">
-          <template v-for="(item,index) in $router.options.routes" v-if="item.menuShow">
-            <li v-if="!item.leaf" :index="index+''" style="position: relative;">
-              <div class="el-submenu__title" style="padding-left: 20px;" @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)"><i :class="item.iconCls"></i></div>
-              <ul class="el-menu submenu" :class="'submenu-hook-'+index" @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)">
-                <li v-for="term in item.children" :key="term.path" v-if="term.menuShow" class="el-menu-item" style="padding-left: 40px;" :class="$route.path==term.path?'is-active':''"
-                    @click="$router.push(term.path)">{{term.name}}</li>
-              </ul>
-            </li>
-            <li v-else-if="item.leaf&&item.children&&item.children.length" class="el-menu-item el-submenu__title" :class="$route.path==item.children[0].path?'is-active':''" @click="$router.push(item.children[0].path)">
-              <i :class="item.iconCls"></i>
-            </li>
-          </template>
-        </ul>
-
       </aside>
 
       <!--右侧内容区-->
@@ -80,7 +71,7 @@
 </template>
 
 <script>
-  import { bus } from '../bus.js'
+  import {bus} from '../bus.js'
   export default {
     name: 'home',
     created(){
@@ -129,40 +120,7 @@
       }
     }
   }
-
-
 </script>
-<style>
-  .el-menu-item, .el-submenu__title {
-    color: #fff;
-  }
-  .el-submenu__title:hover {
-    background-color: #00C1DE;
-  }
-  .el-submenu .el-menu-item {
-    background-color: #333744
-  }
-  .el-submenu .el-menu-item:hover {
-    background-color: #4A5064
-  }
-  .el-submenu .el-menu-item.is-active, .el-menu-item.is-active,
-  .el-submenu .el-menu-item.is-active:hover, .el-menu-item.is-active:hover {
-    background-color: #00C1DE;
-    color: #fff;
-  }
-  .el-menu .iconfont{
-    vertical-align: baseline;
-    margin-right: 6px;
-  }
-
-  .warp-breadcrum{
-    padding: 10px 0px;
-    border-bottom: 1px solid #efefef;
-  }
-  .warp-main{
-    padding-top: 20px;
-  }
-</style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
   .container {
@@ -180,67 +138,93 @@
       .topbar-btn {
         color: #fff;
       }
-      .topbar-btn:hover {
-        background-color: #4A5064;
-      }
+      /*.topbar-btn:hover {*/
+      /*background-color: #4A5064;*/
+      /*}*/
       .topbar-logo {
         float: left;
-        text-align: center;
-        width: 49px;
-        border-right: 1px solid #000;
+        width: 59px;
         line-height: 26px;
+      }
+      .topbar-logos {
+        float: left;
+        width: 120px;
+        line-height: 26px;
+      }
+      .topbar-logo img, .topbar-logos img {
+        height: 40px;
+        margin-top: 5px;
+        margin-left: 2px;
       }
       .topbar-title {
         float: left;
-        text-align: center;
-        width: 129px;
-        border-right: 1px solid #000;
+        text-align: left;
+        width: 200px;
+        padding-left: 10px;
+        border-left: 1px solid #000;
       }
       .topbar-account {
         float: right;
         padding-right: 12px;
       }
-      .userinfo-inner{
+      .userinfo-inner {
         cursor: pointer;
         color: #fff;
         padding-left: 10px;
       }
     }
     .main {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
       display: flex;
       position: absolute;
       top: 50px;
       bottom: 0px;
       overflow: hidden;
     }
+
     aside {
-      flex: 0 0 180px;
-      width: 180px;
+      min-width: 50px;
+      background: #333744;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      &.showSidebar {
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+
       .el-menu {
-        height: 100%;
+        height: 100%; /*写给不支持calc()的浏览器*/
+        height: -moz-calc(100% - 80px);
+        height: -webkit-calc(100% - 80px);
+        height: calc(100% - 80px);
         border-radius: 0px;
         background-color: #333744;
       }
-      .collapsed {
-        width: 50px;
-        .submenu {
-          position: absolute;
-          top: 0px;
-          left: 50px;
-          z-index: 9999;
-          height: auto;
-          display: none;
-        }
+
+      .el-submenu .el-menu-item {
+        min-width: 60px;
+      }
+      .el-menu {
+        width: 180px;
+      }
+      .el-menu--collapse {
+        width: 60px;
+      }
+
+      .el-menu .el-menu-item, .el-submenu .el-submenu__title {
+        height: 46px;
+        line-height: 46px;
+      }
+
+      .el-menu-item:hover, .el-submenu .el-menu-item:hover, .el-submenu__title:hover {
+        background-color: #7ed2df;
       }
     }
-    .menu-collapsed {
-      flex: 0 0 50px;
-      width: 50px;
-    }
-    .menu-expanded {
-      flex: 0 0 180px;
-      width: 180px;
-    }
+
     .menu-toggle {
       background: #4A5064;
       text-align: center;
@@ -248,11 +232,13 @@
       height: 26px;
       line-height: 30px;
     }
+
     .content-container {
       background: #fff;
       flex: 1;
       overflow-y: auto;
       padding: 10px;
+      padding-bottom: 1px;
 
       .content-wrapper {
         background-color: #fff;
