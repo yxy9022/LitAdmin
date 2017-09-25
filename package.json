@@ -12,6 +12,7 @@
     "axios": "^0.16.2",
     "axios-mock-adapter": "^1.9.0",
     "echarts": "^3.7.1",
+    "lodash": "^4.17.4",
     "mockjs": "^1.0.1-beta3",
     "vue": "^2.4.4",
     "vue-router": "^2.7.0"
