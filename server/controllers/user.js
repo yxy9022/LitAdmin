@@ -77,7 +77,7 @@ userController.logout = function (req, res) {
 userController.profile = function (req, res) {
   let nickname = req.body.nickname;
   let email = req.body.email;
-  let name  = req.name.name;
+  let name  = req.body.name;
   let i = _.findIndex(_Users, function (u) {
     return u.id === req.session.userId
   })

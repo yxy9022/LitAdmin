@@ -61,15 +61,19 @@
         that.$refs.form.validate((valid) => {
           if (valid) {
             that.loading = true;
-            let args = {nickname: that.form.nickname, name: that.form.name, email: that.form.email};
+            let args = {
+              nickname: that.form.nickname,
+              name: that.form.name,
+              email: that.form.email
+            };
             API.changeProfile(args).then(function (result) {
               that.loading = false;
               if (result && parseInt(result.errcode) === 0) {
                 //修改成功
                 let user = JSON.parse(window.localStorage.getItem('access-user'));
                 user.nickname = that.form.nickname;
-                user.name = that.form.this.form.name;
-                user.email = that.form.this.form.email;
+                user.name = that.form.name;
+                user.email = that.form.email;
                 localStorage.setItem('access-user', JSON.stringify(user));
                 bus.$emit('setNickName', that.form.nickname);
                 that.$message.success({showClose: true, message: '修改成功', duration: 2000});
@@ -95,6 +99,7 @@
         this.form.useranme = user.username;
         this.form.nickname = user.nickname || '';
         this.form.email = user.email || '';
+        this.form.name = user.name || '';
       }
     }
   }
