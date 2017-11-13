@@ -51,6 +51,7 @@ userController.login = function (req, res) {
       id: user.id,
       username: user.username,
       nickname: user.nickname,
+      name: user.name,
       email: user.email
     });
   } else {
@@ -76,12 +77,14 @@ userController.logout = function (req, res) {
 userController.profile = function (req, res) {
   let nickname = req.body.nickname;
   let email = req.body.email;
+  let name  = req.name.name;
   let i = _.findIndex(_Users, function (u) {
     return u.id === req.session.userId
   })
   if (i > -1) {
     _Users[i].nickname = nickname;
     _Users[i].email = email;
+    _Users[i].name = name;
     res.json({"errcode": 0, "errmsg": "修改成功"});
   } else {
     res.json({"errcode": 40009, "errmsg": "处理失败"});
