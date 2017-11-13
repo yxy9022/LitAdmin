@@ -131,6 +131,20 @@
         </el-col>
       </el-row>
 
+      <el-row :gutter="0" style="border-top:1px solid #f0f0f0;">
+        <el-col :span="8">
+          <p>
+            <el-button type="default" @click="drawEllipseRect" size="small">画圆角矩形</el-button>
+          </p>
+          <p>
+            <canvas id="myCanvas07" width="200" height="200" style="border: 1px solid #f0f0f0;"></canvas>
+          </p>
+        </el-col>
+        <el-col :span="16">
+
+        </el-col>
+      </el-row>
+
       <p style="height: 60px"></p>
     </el-col>
   </el-row>
@@ -233,8 +247,36 @@
           ctx.fill();
           ctx.restore();
         }
+      },
+      drawEllipseRect(){
+        let c = document.getElementById("myCanvas07");
+        let ctx = c.getContext("2d");
+        ctx.clearRect(0, 0, 200, 200);
+        this.drawRoundRect(ctx, 40, 40, 100, 120, 10);
+        ctx.strokeStyle = "#0078AA";
+        ctx.stroke();
+
+        let img = new Image();
+        img.src = ImageBook;
+        img.onload = function () {
+          ctx.save();
+          ctx.scale(0.6,0.6);
+          ctx.drawImage(img, 85, 100);
+          ctx.restore();
+        };
+      },
+      drawRoundRect(cxt, x, y, width, height, radius){
+        cxt.beginPath();
+        cxt.arc(x + radius, y + radius, radius, Math.PI, Math.PI * 3 / 2);
+        cxt.lineTo(width - radius + x, y);
+        cxt.arc(width - radius + x, radius + y, radius, Math.PI * 3 / 2, Math.PI * 2);
+        cxt.lineTo(width + x, height + y - radius);
+        cxt.arc(width - radius + x, height - radius + y, radius, 0, Math.PI * 1 / 2);
+        cxt.lineTo(radius + x, height + y);
+        cxt.arc(radius + x, height - radius + y, radius, Math.PI * 1 / 2, Math.PI);
+        cxt.closePath();
       }
-    },
+  },
     mounted(){
       this.drawRect();
       this.drawLine();
@@ -242,6 +284,7 @@
       this.drawLinearGradient();
       this.drawImage();
       this.drawEllipse();
+      this.drawEllipseRect();
     }
   }
 </script>

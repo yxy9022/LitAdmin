@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>服务端页面</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="https://cdn.bootcss.com/jquery/2.1.2/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.bootcss.com/lodash.js/4.17.3/lodash.min.js"></script>
+    <script src="https://use.fontawesome.com/dfbc06ace2.js"></script>
+    <link rel="stylesheet" href="/stylesheets/style.css"/>
+</head>
+<body>
+<div class="container">
+    <!--头部-->
+    <div class="row head-top">
+        <div class="top-nav">
+            <span class="logo"><i class="fa fa-leaf fa-2x"></i></span>
+            <span class="logo-title">这个是服务端页面</span>
+        </div>
+    </div>
+
+    <!--内容区-->
+    <div class="row main-content">
+        <!--左-->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <h3>提供了如下resful风格接口：</h3>
+          <h4>用户登录：POST /api/v1/users/login</h4>
+          <h4>用户退出：GET /api/v1/users/logout</h4>
+          <h4>修改个人信息：PATCH /api/v1/users/profile</h4>
+          <h4>获取用户列表：GET /api/v1/users</h4>
+
+          <h4>获取图书列表：GET /api/v1/books</h4>
+          <h4>获取一条图书信息：GET /api/v1/books/:id</h4>
+          <h4>添加一条图书信息：POST /api/v1/books/</h4>
+          <h4>修改一条图书信息：PUT /api/v1/books/:id</h4>
+          <h4>删除一条图书信息：DELETE /api/v1/books/:id</h4>
+          <h4>批量删除图片信息：DELETE /api/v1/books/batch/:ids</h4>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

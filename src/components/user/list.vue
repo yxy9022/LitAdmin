@@ -7,15 +7,15 @@
       </el-breadcrumb>
     </el-col>
 
-    <el-col :span="24" class="warp-main">
+    <el-col :span="24" class="warp-main" v-loading="loading" element-loading-text="拼命加载中">
         <!--工具条-->
         <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
           <el-form :inline="true" :model="filters">
             <el-form-item>
-              <el-input v-model="filters.name" placeholder="姓名" style="min-width: 240px;"></el-input>
+              <el-input v-model="filters.name" placeholder="用户名/姓名/昵称" style="min-width: 240px;" @keyup.enter.native="handleSearch"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="getUser">查询</el-button>
+              <el-button type="primary" @click="handleSearch">查询</el-button>
             </el-form-item>
           </el-form>
         </el-col>
@@ -26,13 +26,13 @@
         </el-table-column>
         <el-table-column prop="name" label="姓名" width="120" sortable>
         </el-table-column>
+        <el-table-column prop="nickname" label="昵称" width="120" sortable>
+        </el-table-column>
         <el-table-column prop="sex" label="性别" width="100" :formatter="formatSex" sortable>
         </el-table-column>
-        <el-table-column prop="age" label="年龄" width="100" sortable>
+        <el-table-column prop="email" label="邮箱" min-width="160" sortable>
         </el-table-column>
-        <el-table-column prop="birth" label="生日" width="120" sortable>
-        </el-table-column>
-        <el-table-column prop="addr" label="地址" min-width="180" sortable>
+        <el-table-column prop="addr" label="地址" sortable>
         </el-table-column>
       </el-table>
 
@@ -41,7 +41,7 @@
 </template>
 
 <script>
-  import { reqGetUserList } from '../../api/api';
+  import API from '../../api/api_user';
 
   export default {
     data() {
@@ -50,8 +50,11 @@
           name: ''
         },
         loading: false,
-        users: [
-        ]
+        users: [],
+        total: 0,
+        page: 1,
+        limit: 10,
+        loading: false
       }
     },
     methods: {
@@ -59,22 +62,43 @@
       formatSex: function (row, column) {
         return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
       },
+      handleCurrentChange(val) {
+        this.page = val;
+        this.search();
+      },
+      handleSearch(){
+        this.total = 0;
+        this.page = 1;
+        this.search();
+      },
       //获取用户列表
-      getUser: function () {
-        let para = {
-          name: this.filters.name
+      search: function () {
+        let that = this;
+        let params = {
+          page: that.page,
+          limit: 10,
+          name: that.filters.name
         };
-        this.loading = true;
-        //NProgress.start();
-        reqGetUserList(para).then((res) => {
-          this.users = res.data.users;
-          this.loading = false;
-          //NProgress.done();
+
+        that.loading = true;
+        API.findList(params).then(function (result) {
+          that.loading = false;
+          if (result && result.users) {
+            that.total = result.total;
+            that.users = result.users;
+          }
+        }, function (err) {
+          that.loading = false;
+          that.$message.error({showClose: true, message: err.toString(), duration: 2000});
+        }).catch(function (error) {
+          that.loading = false;
+          console.log(error);
+          that.$message.error({showClose: true, message: '请求出现异常', duration: 2000});
         });
       }
     },
     mounted() {
-      this.getUser();
+      this.handleSearch()
     }
   }
 </script>

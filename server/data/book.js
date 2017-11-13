@@ -1,10 +1,11 @@
 /**
- * Created by jerry on 2017/4/14.
+ * 初始化图书(book)模拟数据
+ *
+ * Created by jerry on 2017/11/13.
  */
+const Mock = require('mockjs');
 
-import Mock from 'mockjs'
-
-const Books = []
+const Books = [];
 for (let i = 0; i < 100; i++) {
   Books.push(Mock.mock({
     id: Mock.Random.guid(),
@@ -15,4 +16,4 @@ for (let i = 0; i < 100; i++) {
   }))
 }
 
-export {Books}
+module.exports = Books;

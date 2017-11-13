@@ -90,10 +90,10 @@ let router = new Router({
 router.beforeEach((to, from, next) => {
   // console.log('to:' + to.path)
   if (to.path.startsWith('/login')) {
-    window.sessionStorage.removeItem('access-user')
+    window.localStorage.removeItem('access-user')
     next()
   } else {
-    let user = JSON.parse(window.sessionStorage.getItem('access-user'))
+    let user = JSON.parse(window.localStorage.getItem('access-user'))
     if (!user) {
       next({path: '/login'})
     } else {

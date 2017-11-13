@@ -3,4 +3,4 @@
  */
 import Vue from 'vue'
 
-export var bus = new Vue()
+export let bus = new Vue()

@@ -8,15 +8,15 @@
       </el-breadcrumb>
     </el-col>
 
-    <el-col :span="24" class="warp-main">
+    <el-col :span="24" class="warp-main" v-loading="loading" element-loading-text="拼命加载中">
       <!--工具条-->
       <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
         <el-form :inline="true" :model="filters">
           <el-form-item>
-            <el-input v-model="filters.name" placeholder="书名"></el-input>
+            <el-input v-model="filters.name" placeholder="书名" @keyup.enter.native="handleSearch"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" v-on:click="getBooks">查询</el-button>
+            <el-button type="primary" v-on:click="handleSearch">查询</el-button>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="showAddDialog">新增</el-button>
@@ -25,7 +25,7 @@
       </el-col>
 
       <!--列表-->
-      <el-table :data="books" highlight-current-row v-loading="listLoading" @selection-change="selsChange"
+      <el-table :data="books" highlight-current-row @selection-change="selsChange"
                 style="width: 100%;">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column type="index" width="60"></el-table-column>
@@ -74,7 +74,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click.native="editFormVisible = false">取消</el-button>
-          <el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
+          <el-button type="primary" @click.native="editSubmit">提交</el-button>
         </div>
       </el-dialog>
 
@@ -105,7 +105,7 @@
 </template>
 <script>
   import util from '../../common/util'
-  import {reqGetBookListPage, reqDeleteBook, reqEditBook, reqBatchDeleteBook, reqAddBook} from '../../api/api';
+  import API from '../../api/api_book';
 
   export default{
     data(){
@@ -116,12 +116,12 @@
         books: [],
         total: 0,
         page: 1,
-        listLoading: false,
+        limit: 10,
+        loading: false,
         sels: [], //列表选中列
 
         //编辑相关数据
         editFormVisible: false,//编辑界面是否显示
-        editLoading: false,
         editFormRules: {
           name: [
             {required: true, message: '请输入书名', trigger: 'blur'}
@@ -166,40 +166,58 @@
     methods: {
       handleCurrentChange(val) {
         this.page = val;
-        this.getBooks();
+        this.search();
       },
-      //获取用户列表
-      getBooks() {
-        let para = {
-          page: this.page,
-          name: this.filters.name
+      handleSearch(){
+        this.total = 0;
+        this.page = 1;
+        this.search();
+      },
+      search(){
+        let that = this;
+        let params = {
+          page: that.page,
+          limit: 10,
+          name: that.filters.name
         };
-        this.listLoading = true;
-        //NProgress.start();
-        reqGetBookListPage(para).then((res) => {
-          this.total = res.data.total;
-          this.books = res.data.books;
-          this.listLoading = false;
-          //NProgress.done();
-        })
+
+        that.loading = true;
+        API.findList(params).then(function (result) {
+          that.loading = false;
+          if (result && result.books) {
+            that.total = result.total;
+            that.books = result.books;
+          }
+        }, function (err) {
+          that.loading = false;
+          that.$message.error({showClose: true, message: err.toString(), duration: 2000});
+        }).catch(function (error) {
+          that.loading = false;
+          console.log(error);
+          that.$message.error({showClose: true, message: '请求出现异常', duration: 2000});
+        });
       },
       selsChange: function (sels) {
         this.sels = sels;
       },
       //删除
       delBook: function (index, row) {
+        let that = this;
         this.$confirm('确认删除该记录吗?', '提示', {type: 'warning'}).then(() => {
-          this.listLoading = true;
-          //NProgress.start();
-          let para = {id: row.id};
-          reqDeleteBook(para).then((res) => {
-            this.listLoading = false;
-            //NProgress.done();
-            this.$message({
-              message: '删除成功',
-              type: 'success'
-            });
-            this.getBooks();
+          that.loading = true;
+          API.remove(row.id).then(function (result) {
+            that.loading = false;
+            if (result && parseInt(result.errcode) === 0) {
+              that.$message.success({showClose: true, message: '删除成功', duration: 1500});
+              that.search();
+            }
+          }, function (err) {
+            that.loading = false;
+            that.$message.error({showClose: true, message: err.toString(), duration: 2000});
+          }).catch(function (error) {
+            that.loading = false;
+            console.log(error);
+            that.$message.error({showClose: true, message: '请求出现异常', duration: 2000});
           });
         }).catch(() => {
         });
@@ -211,24 +229,29 @@
       },
       //编辑
       editSubmit: function () {
+        let that = this;
         this.$refs.editForm.validate((valid) => {
           if (valid) {
-            this.$confirm('确认提交吗？', '提示', {}).then(() => {
-              this.editLoading = true;
-              //NProgress.start();
-              let para = Object.assign({}, this.editForm);
-              para.publishAt = (!para.publishAt || para.publishAt == '') ? '' : util.formatDate.format(new Date(para.publishAt), 'yyyy-MM-dd');
-              reqEditBook(para).then((res) => {
-                this.editLoading = false;
-                //NProgress.done();
-                this.$message({
-                  message: '提交成功',
-                  type: 'success'
-                });
-                this.$refs['editForm'].resetFields();
-                this.editFormVisible = false;
-                this.getBooks();
-              });
+            this.loading = true;
+            let para = Object.assign({}, this.editForm);
+            para.publishAt = (!para.publishAt || para.publishAt == '') ? '' : util.formatDate.format(new Date(para.publishAt), 'yyyy-MM-dd');
+            API.update(para.id, para).then(function (result) {
+              that.loading = false;
+              if (result && parseInt(result.errcode) === 0) {
+                that.$message.success({showClose: true, message: '修改成功', duration: 2000});
+                that.$refs['editForm'].resetFields();
+                that.editFormVisible = false;
+                that.search();
+              } else {
+                that.$message.error({showClose: true, message: '修改失败', duration: 2000});
+              }
+            }, function (err) {
+              that.loading = false;
+              that.$message.error({showClose: true, message: err.toString(), duration: 2000});
+            }).catch(function (error) {
+              that.loading = false;
+              console.log(error);
+              that.$message.error({showClose: true, message: '请求出现异常', duration: 2000});
             });
           }
         });
@@ -244,43 +267,55 @@
       },
       //新增
       addSubmit: function () {
+        let that = this;
         this.$refs.addForm.validate((valid) => {
           if (valid) {
-            this.addLoading = true;
-            //NProgress.start();
+            that.loading = true;
             let para = Object.assign({}, this.addForm);
-            para.publishAt = (!para.publishAt || para.publishAt == '') ? '' : util.formatDate.format(new Date(para.publishAt), 'yyyy-MM-dd');
-            reqAddBook(para).then((res) => {
-              this.addLoading = false;
-              //NProgress.done();
-              this.$message({
-                message: '提交成功',
-                type: 'success'
-              });
-              this.$refs['addForm'].resetFields();
-              this.addFormVisible = false;
-              this.getBooks();
+            para.publishAt = (!para.publishAt || para.publishAt === '') ? '' : util.formatDate.format(new Date(para.publishAt), 'yyyy-MM-dd');
+            API.add(para).then(function (result) {
+              that.loading = false;
+              if (result && parseInt(result.errcode) === 0) {
+                that.$message.success({showClose: true, message: '新增成功', duration: 2000});
+                that.$refs['addForm'].resetFields();
+                that.addFormVisible = false;
+                that.search();
+              } else {
+                that.$message.error({showClose: true, message: '修改失败', duration: 2000});
+              }
+            }, function (err) {
+              that.loading = false;
+              that.$message.error({showClose: true, message: err.toString(), duration: 2000});
+            }).catch(function (error) {
+              that.loading = false;
+              console.log(error);
+              that.$message.error({showClose: true, message: '请求出现异常', duration: 2000});
             });
+
           }
         });
       },
       //批量删除
       batchDeleteBook: function () {
-        var ids = this.sels.map(item => item.id).toString();
+        let ids = this.sels.map(item => item.id).toString();
+        let that = this;
         this.$confirm('确认删除选中记录吗？', '提示', {
           type: 'warning'
         }).then(() => {
-          this.listLoading = true;
-          //NProgress.start();
-          let para = {ids: ids};
-          reqBatchDeleteBook(para).then((res) => {
-            this.listLoading = false;
-            //NProgress.done();
-            this.$message({
-              message: '删除成功',
-              type: 'success'
-            });
-            this.getBooks();
+          that.loading = true;
+          API.removeBatch(ids).then(function (result) {
+            that.loading = false;
+            if (result && parseInt(result.errcode) === 0) {
+              that.$message.success({showClose: true, message: '删除成功', duration: 1500});
+              that.search();
+            }
+          }, function (err) {
+            that.loading = false;
+            that.$message.error({showClose: true, message: err.toString(), duration: 2000});
+          }).catch(function (error) {
+            that.loading = false;
+            console.log(error);
+            that.$message.error({showClose: true, message: '请求出现异常', duration: 2000});
           });
         }).catch(() => {
 
@@ -288,7 +323,7 @@
       }
     },
     mounted() {
-      this.getBooks();
+      this.handleSearch()
     }
   }
 </script>

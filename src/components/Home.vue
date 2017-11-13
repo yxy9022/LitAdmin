@@ -13,7 +13,7 @@
       </div>
       <div class="topbar-account topbar-btn">
         <el-dropdown trigger="click">
-          <span class="el-dropdown-link userinfo-inner"><i class="iconfont icon-user"></i> {{sysUserName}}  <i
+          <span class="el-dropdown-link userinfo-inner"><i class="iconfont icon-user"></i> {{nickname}}  <i
             class="iconfont icon-down"></i></span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>
@@ -72,17 +72,25 @@
 
 <script>
   import {bus} from '../bus.js'
+  import API from '../api/api_user';
+
   export default {
     name: 'home',
     created(){
-      bus.$on('setUserName', (text) => {
-        this.sysUserName = text;
+      bus.$on('setNickName', (text) => {
+        this.nickname = text;
+      })
+
+      bus.$on('goto', (url) => {
+        if (url === "/login") {
+          localStorage.removeItem('access-user');
+        }
+        this.$router.push(url);
       })
     },
     data () {
       return {
-        sysUserName: '',
-        sysUserAvatar: '',
+        nickname: '',
         collapsed: false,
       }
     },
@@ -101,22 +109,32 @@
         this.$refs.menuCollapsed.getElementsByClassName('submenu-hook-' + i)[0].style.display = status ? 'block' : 'none';
       },
       logout(){
-        var _this = this;
+        let that = this;
         this.$confirm('确认退出吗?', '提示', {
-          //type: 'warning'
+          confirmButtonClass: 'el-button--warning'
         }).then(() => {
-          sessionStorage.removeItem('access-user');
-          _this.$router.push('/login');
-        }).catch(() => {
-
-        });
+          //确认
+          that.loading = true;
+          API.logout().then(function (result) {
+            that.loading = false;
+            localStorage.removeItem('access-user');
+            that.$router.go('/login'); //用go刷新
+          }, function (err) {
+            that.loading = false;
+            that.$message.error({showClose: true, message: err.toString(), duration: 2000});
+          }).catch(function (error) {
+            that.loading = false;
+            console.log(error);
+            that.$message.error({showClose: true, message: '请求出现异常', duration: 2000});
+          });
+        }).catch(() => {});
       }
     },
     mounted() {
-      var user = sessionStorage.getItem('access-user');
+      let user = localStorage.getItem('access-user');
       if (user) {
         user = JSON.parse(user);
-        this.sysUserName = user.name || '';
+        this.nickname = user.nickname || '';
       }
     }
   }

@@ -20,7 +20,7 @@
           <el-input v-model="form.confirmPwd"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="default" @click="onSubmit">提交</el-button>
+          <el-button type="default" @click="handleChangepwd">提交</el-button>
         </el-form-item>
       </el-form>
     </el-col>
@@ -37,9 +37,9 @@
         }
       }
     },
-    methods:{
-      onSubmit() {
-        this.$message({message:"此功能暂时未开发",duration:1500});
+    methods: {
+      handleChangepwd() {
+        this.$message({message: "此功能只是让你看看，不会开发！", duration: 2000});
       }
     }
   }

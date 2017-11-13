@@ -1,27 +1,27 @@
 <template>
   <el-form ref="AccountFrom" :model="account" :rules="rules" label-position="left" label-width="0px"
            class="demo-ruleForm login-container">
-    <h3 class="title">系统登录</h3>
+    <h3 class="title">管理员登录</h3>
     <el-form-item prop="username">
       <el-input type="text" v-model="account.username" auto-complete="off" placeholder="账号"></el-input>
     </el-form-item>
     <el-form-item prop="pwd">
       <el-input type="password" v-model="account.pwd" auto-complete="off" placeholder="密码"></el-input>
     </el-form-item>
-    <el-checkbox v-model="checked" checked class="remember">记住密码</el-checkbox>
+    <!--<el-checkbox v-model="checked" checked class="remember">记住密码</el-checkbox>-->
     <el-form-item style="width:100%;">
-      <el-button type="primary" style="width:100%;" @click.native.prevent="handleLogin" :loading="logining">登录</el-button>
+      <el-button type="primary" style="width:100%;" @click.native.prevent="handleLogin" :loading="loading">登录</el-button>
     </el-form-item>
   </el-form>
 </template>
 
 <script>
-  import {requestLogin} from '../api/api';
-  //import NProgress from 'nprogress'
+  import API from '../api/api_user';
+
   export default {
     data() {
       return {
-        logining: false,
+        loading: false,
         account: {
           username: 'admin',
           pwd: '123456'
@@ -41,39 +41,38 @@
     },
     methods: {
       handleLogin() {
+        let that = this;
         this.$refs.AccountFrom.validate((valid) => {
           if (valid) {
-
-            this.logining = true;
-            //NProgress.start();
-            var loginParams = { username: this.account.username, password: this.account.pwd };
-            requestLogin(loginParams).then(data => {
-              this.logining = false;
-              //NProgress.done();
-              let { msg, code, user } = data;
-              if (code !== 200) {
-                this.$message({
-                  message: msg,
-                  type: 'error'
-                });
+            this.loading = true;
+            let loginParams = {username: this.account.username, pwd: this.account.pwd};
+            API.login(loginParams).then(function (result) {
+              that.loading = false;
+              if (result && result.id) {
+                localStorage.setItem('access-user', JSON.stringify(result));
+//                that.$store.commit('SET_ROUTERS', user.permissions)
+//                that.$router.addRoutes(that.$store.getters.addRouters);
+//                that.$router.options.routes = that.$store.getters.routers;
+                that.$router.push({path: '/'});
               } else {
-                sessionStorage.setItem('access-user', JSON.stringify(user));
-                this.$router.push({ path: '/' });
+                that.$message.error({showClose: true, message: result.errmsg || '登录失败', duration: 2000});
               }
+            }, function (err) {
+              that.loading = false;
+              that.$message.error({showClose: true, message: err.toString(), duration: 2000});
+            }).catch(function (error) {
+              that.loading = false;
+              console.log(error);
+              that.$message.error({showClose: true, message: '请求出现异常', duration: 2000});
             });
-
-          } else {
-            console.log('error submit!!');
-            return false;
           }
         });
       }
     }
   }
-
 </script>
 <style>
-  body{
+  body {
     background: #DFE9FB;
   }
 </style>
@@ -91,12 +90,11 @@
     border: 1px solid #eaeaea;
     box-shadow: 0 0 25px #cac6c6;
 
-    background: -ms-linear-gradient(top, #fff, #6495ed);        /* IE 10 */
-    background:-moz-linear-gradient(top,#b8c4cb,#f6f6f8);/*火狐*/
-    background:-webkit-gradient(linear, 0% 0%, 0% 100%,from(#b8c4cb), to(#f6f6f8));/*谷歌*/
-    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff), to(#6495ed));      /* Safari 4-5, Chrome 1-9*/
-    background: -webkit-linear-gradient(top, #fff, #6495ed,#fff);   /*Safari5.1 Chrome 10+*/
-    background: -o-linear-gradient(top, #fff, #6495ed);  /*Opera 11.10+*/
+    background: -ms-linear-gradient(top, #ace, #00C1DE); /* IE 10 */
+    background: -moz-linear-gradient(top, #ace, #00C1DE); /*火狐*/
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ace), to(#00C1DE)); /*谷歌*/
+    background: -webkit-linear-gradient(top, #ace, #00C1DE); /*Safari5.1 Chrome 10+*/
+    background: -o-linear-gradient(top,#ace, #00C1DE); /*Opera 11.10+*/
 
     .title {
       margin: 0px auto 40px auto;

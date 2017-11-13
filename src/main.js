@@ -8,9 +8,6 @@ import 'element-ui/lib/theme-default/index.css'
 import '@/assets/iconfont.css'
 import '@/assets/styles/main.scss'
 
-import Mock from './mock'
-Mock.init()
-
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 
@@ -19,5 +16,5 @@ new Vue({
   el: '#app',
   router,
   template: '<App/>',
-  components: { App }
+  components: {App}
 })

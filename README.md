@@ -30,14 +30,25 @@
 ``` bash
 先安装node v8.2.1环境，可以用nvm安装，支持多版本切换
 
-#下载项目
+开启一个控制台窗口
+
+#下载项目命令
 git clone https://github.com/jerry9022/LitAdmin
 
-# install dependencies
-# 定位到项目目录安装依赖
+#定位到项目中的server目录安装服务端依赖
 npm install
 
-# serve with hot reload at localhost:8080
+#启动服务端
+npm start
+> 显示如下内容说明服务端启成功
+> Server is runing... Listening on port 3000
+> Listening at http://localhost:3000
+
+# install dependencies
+# 定位到项目根目录(LitAdmin目录)安装依赖
+npm install
+
+# serve with hot reload at localhost:8081
 # 本地开发环境运行
 npm run dev
 
@@ -47,6 +58,10 @@ npm run build
 
 
 ### 更新日志
+> 2017-11-13
+ >> 1.去掉先前在前端写的模拟数据，增加server端提供模拟数据。 
+ >> 2.代码优化。  
+ 
  > 2017-9-20
  >> 1.主要组件升级：vue.js升级到v2.4.4，element-ui升级到v1.4.4，其它组件升级  
  >> 2.主界面左侧菜单栏修改，使用element-ui升级的导航组件支持折叠功能。  
