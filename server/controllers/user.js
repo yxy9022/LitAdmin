@@ -39,7 +39,8 @@ userController.login = function (req, res) {
   let user = _.find(_Users, function (u) {
     return u.username === username;
   });
-
+  console.log('---_Users----');
+  console.log(_Users);
   if (!user) {
     return res.json({"errcode": 40003, "errmsg": "用户不存在"});
   }
