@@ -5,9 +5,8 @@
   "author": "jerry9022@qq.com",
   "private": true,
   "scripts": {
-    "server": "node server/bin/www &",
-    "dev": "node build/dev-server.js &",
-    "start": "npm run server && npm run dev",
+    "server": "node server/bin/www",
+    "dev": "node build/dev-server.js",
     "build": "node build/build.js"
   },
   "dependencies": {
