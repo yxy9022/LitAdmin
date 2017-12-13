@@ -30,7 +30,7 @@
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column type="index" width="60"></el-table-column>
         <el-table-column type="expand">
-          <template scope="props">
+          <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">
               <el-form-item label="[图书简介]">
                 <span>{{ props.row.description }}</span>
@@ -42,7 +42,7 @@
         <el-table-column prop="author" label="作者" width="100" sortable></el-table-column>
         <el-table-column prop="publishAt" label="出版日期" width="150" sortable></el-table-column>
         <el-table-column label="操作" width="150">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-button size="small" @click="showEditDialog(scope.$index,scope.row)">编辑</el-button>
             <el-button type="danger" @click="delBook(scope.$index,scope.row)" size="small">删除</el-button>
           </template>
@@ -57,7 +57,7 @@
         </el-pagination>
       </el-col>
 
-      <el-dialog title="编辑" v-model="editFormVisible" :close-on-click-modal="false">
+      <el-dialog title="编辑" :visible.sync ="editFormVisible" :close-on-click-modal="false">
         <el-form :model="editForm" label-width="100px" :rules="editFormRules" ref="editForm">
           <el-form-item label="书名" prop="name">
             <el-input v-model="editForm.name" auto-complete="off"></el-input>
@@ -79,7 +79,7 @@
       </el-dialog>
 
       <!--新增界面-->
-      <el-dialog title="新增" v-model="addFormVisible" :close-on-click-modal="false">
+      <el-dialog title="新增" :visible.sync ="addFormVisible" :close-on-click-modal="false">
         <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
           <el-form-item label="书名" prop="name">
             <el-input v-model="addForm.name" auto-complete="off"></el-input>
