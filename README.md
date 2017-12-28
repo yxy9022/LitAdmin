@@ -7,7 +7,7 @@
 ### 说明
 
 　这是一个用vuejs2.0和element-ui 2.x搭建的后台管理界面。
-  演示地址：[http://v.ipyro.cn](http://v.ipyro.cn)
+  演示地址：[http://lit.ipyro.cn](http://lit.ipyro.cn)
     
 ### 项目结构
 ```
