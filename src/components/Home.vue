@@ -17,10 +17,10 @@
             class="iconfont icon-down"></i></span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>
-              <router-link to="/user/profile"><span style="color: #555;font-size: 14px;">个人信息</span></router-link>
+              <div @click="jumpTo('/user/profile')"><span style="color: #555;font-size: 14px;">个人信息</span></div>
             </el-dropdown-item>
             <el-dropdown-item>
-              <router-link :to="'/user/changepwd'"><span style="color: #555;font-size: 14px;">修改密码</span></router-link>
+              <div @click="jumpTo('/user/changepwd')"><span style="color: #555;font-size: 14px;">修改密码</span></div>
             </el-dropdown-item>
             <el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
           </el-dropdown-menu>
@@ -38,7 +38,7 @@
           <i class="iconfont icon-menuunfold" v-show="collapsed"></i>
         </div>
         <!--导航菜单-->
-        <el-menu default-active="0" router :collapse="collapsed">
+        <el-menu :default-active="defaultActiveIndex" router :collapse="collapsed" @select="handleSelect">
           <template v-for="(item,index) in $router.options.routes" v-if="item.menuShow">
             <el-submenu v-if="!item.leaf" :index="index+''">
               <template slot="title"><i :class="item.iconCls"></i><span slot="title">{{item.name}}</span></template>
@@ -90,23 +90,22 @@
     },
     data () {
       return {
+        defaultActiveIndex: "0",
         nickname: '',
         collapsed: false,
       }
     },
     methods: {
-      handleOpen() {
-        //console.log('handleopen');
-      },
-      handleClose() {
-        //console.log('handleclose');
+      handleSelect(index){
+        this.defaultActiveIndex = index;
       },
       //折叠导航栏
       collapse: function () {
         this.collapsed = !this.collapsed;
       },
-      showMenu(i, status){
-        this.$refs.menuCollapsed.getElementsByClassName('submenu-hook-' + i)[0].style.display = status ? 'block' : 'none';
+      jumpTo(url){
+        this.defaultActiveIndex = url;
+        this.$router.push(url); //用go刷新
       },
       logout(){
         let that = this;
@@ -221,6 +220,7 @@
         height: calc(100% - 80px);
         border-radius: 0px;
         background-color: #333744;
+        border-right: 0px;
       }
 
       .el-submenu .el-menu-item {
