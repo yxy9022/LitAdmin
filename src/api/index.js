@@ -1,7 +1,6 @@
 /**
  * Created by jerry on 2017/6/9.
  */
-import Env from './env';
 import axios from 'axios'
 import {bus} from '../bus.js'
 
@@ -34,10 +33,7 @@ axios.interceptors.response.use(function (response) {
 });
 
 //基地址
-let base = Env.baseURL;
-
-//测试使用
-export const ISDEV = Env.isDev;
+let base = '';  //接口代理地址参见：config/index.js中的proxyTable配置
 
 //通用方法
 export const POST = (url, params) => {
